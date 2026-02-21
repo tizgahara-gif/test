@@ -32,6 +32,7 @@ minimal_blender5_addon/
 - 追加した `hair` の Curve Geometry に、追加した `taper` を Taper Object として設定
 - 追加した `hair` の Curve Bevel Mode を `Object` にし、追加した `bavel`（Bézier Circle）を Bevel Object として設定
 - `hair1` など連番付き Hair 生成時、同じ連番の `taper1` / `bevel1`（または `bavel1`）が既にあれば新規生成せず既存オブジェクトを再利用
+- `hair1` 生成時に `taper` / `bevel` が存在しない場合は、`taper1` / `bevel1` を同時生成し、Geometry/Bevel へ割り当て
 - `hair2` 生成時に `taper2` / `bevel2` が無ければ、その番号で新規生成して割り当て
 - 既に同名オブジェクトが存在する場合は、末尾に連番を付けて作成:
   - 例: `hair`, `hair1`, `hair2` ...

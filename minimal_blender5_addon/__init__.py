@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 15, 0),
+    "version": (0, 16, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -92,6 +92,13 @@ def find_existing_bevel_object(suffix: str) -> bpy.types.Object | None:
     return None
 
 
+def choose_partner_name(base_name: str, suffix: str) -> str:
+    """Choose partner name that follows hair suffix policy."""
+    if suffix:
+        return f"{base_name}{suffix}"
+    return unique_object_name(base_name)
+
+
 class DEMO_OT_create_curves(bpy.types.Operator):
     """Create hair/taper/bavel objects with unique suffixes and collection routing."""
 
@@ -119,7 +126,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
         taper_object = find_existing_partner_object("taper", hair_suffix)
         if taper_object is None:
-            taper_name = f"taper{hair_suffix}" if hair_suffix else unique_object_name("taper")
+            taper_name = choose_partner_name("taper", hair_suffix)
             bpy.ops.curve.primitive_bezier_curve_add(location=(1.5, 0.0, 0.0))
             taper_object = context.view_layer.objects.active
             taper_object.name = taper_name
@@ -132,7 +139,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
         bavel_object = find_existing_bevel_object(hair_suffix)
         if bavel_object is None:
-            bavel_name = f"bevel{hair_suffix}" if hair_suffix else unique_object_name("bavel")
+            bavel_name = choose_partner_name("bevel", hair_suffix)
             bpy.ops.curve.primitive_bezier_circle_add(location=(3.0, 0.0, 0.0))
             bavel_object = context.view_layer.objects.active
             bavel_object.name = bavel_name
