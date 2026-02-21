@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 13, 0),
+    "version": (0, 14, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -51,6 +51,47 @@ def move_object_to_collection(obj: bpy.types.Object, target_collection: bpy.type
     target_collection.objects.link(obj)
 
 
+def split_numeric_suffix(name: str, base_name: str) -> str:
+    """Return numeric suffix for names like base, base1, base2."""
+    if not name.startswith(base_name):
+        return ""
+
+    suffix = name[len(base_name):]
+    if suffix.isdigit():
+        return suffix
+    return ""
+
+
+def find_existing_partner_object(base_name: str, suffix: str) -> bpy.types.Object | None:
+    """Find an existing partner object with same numeric suffix."""
+    if suffix == "":
+        candidate_names = (base_name,)
+    else:
+        candidate_names = (f"{base_name}{suffix}",)
+
+    for candidate_name in candidate_names:
+        existing_object = bpy.data.objects.get(candidate_name)
+        if existing_object is not None:
+            return existing_object
+
+    return None
+
+
+def find_existing_bevel_object(suffix: str) -> bpy.types.Object | None:
+    """Find existing bevel partner (prefer bevel*, then bavel* for compatibility)."""
+    if suffix == "":
+        candidate_names = ("bevel", "bavel")
+    else:
+        candidate_names = (f"bevel{suffix}", f"bavel{suffix}")
+
+    for candidate_name in candidate_names:
+        existing_object = bpy.data.objects.get(candidate_name)
+        if existing_object is not None:
+            return existing_object
+
+    return None
+
+
 class DEMO_OT_create_curves(bpy.types.Operator):
     """Create hair/taper/bavel objects with unique suffixes and collection routing."""
 
@@ -63,30 +104,44 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
         active_collection = context.collection
 
-        for index, base_name in enumerate(BASE_OBJECT_NAMES):
-            object_name = unique_object_name(base_name)
-            collection_name = COLLECTION_BY_BASE_NAME.get(base_name)
-            location = (float(index) * 1.5, 0.0, 0.0)
+        hair_name = unique_object_name("hair")
+        hair_suffix = split_numeric_suffix(hair_name, "hair")
 
-            if base_name == "bavel":
-                bpy.ops.curve.primitive_bezier_circle_add(location=location)
-            else:
-                bpy.ops.curve.primitive_bezier_curve_add(location=location)
+        bpy.ops.curve.primitive_bezier_curve_add(location=(0.0, 0.0, 0.0))
+        hair_object = context.view_layer.objects.active
+        hair_object.name = hair_name
+        if hair_object.data is not None:
+            hair_object.data.name = hair_name
+        move_object_to_collection(hair_object, active_collection)
 
-            created_object = context.view_layer.objects.active
-            created_object.name = object_name
-            if created_object.data is not None:
-                created_object.data.name = object_name
+        created_objects["hair"] = hair_object
+        created_names.append(hair_name)
 
-            if collection_name is None:
-                target_collection = active_collection
-            else:
-                target_collection = get_or_create_collection(collection_name)
+        taper_object = find_existing_partner_object("taper", hair_suffix)
+        if taper_object is None:
+            taper_name = unique_object_name("taper")
+            bpy.ops.curve.primitive_bezier_curve_add(location=(1.5, 0.0, 0.0))
+            taper_object = context.view_layer.objects.active
+            taper_object.name = taper_name
+            if taper_object.data is not None:
+                taper_object.data.name = taper_name
+            move_object_to_collection(taper_object, get_or_create_collection("taper"))
+            created_names.append(taper_name)
 
-            move_object_to_collection(created_object, target_collection)
+        created_objects["taper"] = taper_object
 
-            created_objects[base_name] = created_object
-            created_names.append(object_name)
+        bavel_object = find_existing_bevel_object(hair_suffix)
+        if bavel_object is None:
+            bavel_name = unique_object_name("bavel")
+            bpy.ops.curve.primitive_bezier_circle_add(location=(3.0, 0.0, 0.0))
+            bavel_object = context.view_layer.objects.active
+            bavel_object.name = bavel_name
+            if bavel_object.data is not None:
+                bavel_object.data.name = bavel_name
+            move_object_to_collection(bavel_object, get_or_create_collection("bevel"))
+            created_names.append(bavel_name)
+
+        created_objects["bavel"] = bavel_object
 
         hair_object = created_objects.get("hair")
         taper_object = created_objects.get("taper")
