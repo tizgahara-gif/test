@@ -1,9 +1,9 @@
 """Minimal Blender 5.x add-on template."""
 
 bl_info = {
-    "name": "Minimal Blender 5.x Template",
+    "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 8, 0),
+    "version": (0, 9, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -180,7 +180,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 class DEMO_PT_panel(bpy.types.Panel):
     """Simple panel shown in the 3D View N-panel."""
 
-    bl_label = "Minimal Add-on"
+    bl_label = "SH5"
     bl_idname = "DEMO_PT_panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"

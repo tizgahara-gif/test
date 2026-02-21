@@ -1,4 +1,4 @@
-# Blender 5.x 最小アドオン雛形
+# Simple_hair5 (Blender 5.x)
 
 Blender 5.x 向けの最小構成アドオンです。以下を含みます。
 
@@ -20,7 +20,7 @@ minimal_blender5_addon/
 2. Blender で `Edit > Preferences > Add-ons > Install...` から zip を選ぶ。
 3. Add-on を有効化する。
 4. `3D View` で `N` キーを押し、`Blender5Tab` タブを開く。
-5. `Minimal Add-on` パネルの `Create hair/taper/bavel` ボタンを押す。
+5. `SH5` パネルの `Create hair/taper/bavel` ボタンを押す。
 
 ## ボタン動作
 
