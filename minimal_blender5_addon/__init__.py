@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 10, 0),
+    "version": (0, 11, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -71,6 +71,17 @@ def create_bezier_curve_object(
     curve_object.location = location
     target_collection.objects.link(curve_object)
     return curve_object
+
+
+
+
+def create_taper_bezier_object(
+    name: str,
+    location: tuple[float, float, float],
+    target_collection: bpy.types.Collection,
+) -> bpy.types.Object:
+    """Create taper as an explicit Bézier curve object."""
+    return create_bezier_curve_object(name=name, location=location, target_collection=target_collection)
 
 
 def create_bezier_circle_object(
@@ -145,6 +156,12 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             location = (float(index) * 1.5, 0.0, 0.0)
             if base_name == "bavel":
                 created_object = create_bezier_circle_object(
+                    name=object_name,
+                    location=location,
+                    target_collection=target_collection,
+                )
+            elif base_name == "taper":
+                created_object = create_taper_bezier_object(
                     name=object_name,
                     location=location,
                     target_collection=target_collection,

@@ -39,4 +39,5 @@ minimal_blender5_addon/
 - タブ名は `TAB_NAME` を変更
 - 作成対象名は `BASE_OBJECT_NAMES` を変更
 - コレクション振り分けは `COLLECTION_BY_BASE_NAME` を変更
-- Curve 形状は `create_bezier_curve_object()` / `create_bezier_circle_object()` を変更
+- Curve 形状は `create_bezier_curve_object()` / `create_taper_bezier_object()` / `create_bezier_circle_object()` を変更
+- `taper` は専用関数 `create_taper_bezier_object()` で Bézier Curve を生成
