@@ -3,16 +3,16 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 11, 0),
+    "version": (0, 12, 0),
     "blender": (5, 0, 0),
-    "location": "3D View > N Panel > Blender5Tab",
+    "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
     "category": "3D View",
 }
 
 import bpy
 
-TAB_NAME = "Blender5Tab"
+TAB_NAME = "SH5"
 BASE_OBJECT_NAMES = ("hair", "taper", "bavel")
 COLLECTION_BY_BASE_NAME = {
     "taper": "taper",
@@ -202,7 +202,7 @@ class DEMO_PT_panel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="3D View > Nパネル > Blender5Tab")
+        layout.label(text="3D View > Nパネル > SH5")
         layout.operator(DEMO_OT_create_curves.bl_idname, icon="CURVE_DATA")
 
 

@@ -3,7 +3,7 @@
 Blender 5.x 向けの最小構成アドオンです。以下を含みます。
 
 - `bl_info`（Blender 5.0.0 指定）
-- `Panel` 1つ（**3D View > Nパネル > Blender5Tab** に表示）
+- `Panel` 1つ（**3D View > Nパネル > SH5** に表示）
 - `Operator` 1つ（ボタン押下で `hair` / `taper` / `bavel` を作成）
 - `register()` / `unregister()`
 
@@ -19,7 +19,7 @@ minimal_blender5_addon/
 1. `minimal_blender5_addon` フォルダを zip 化する。
 2. Blender で `Edit > Preferences > Add-ons > Install...` から zip を選ぶ。
 3. Add-on を有効化する。
-4. `3D View` で `N` キーを押し、`Blender5Tab` タブを開く。
+4. `3D View` で `N` キーを押し、`SH5` タブを開く。
 5. `SH5` パネルの `Create hair/taper/bavel` ボタンを押す。
 
 ## ボタン動作
