@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Minimal Blender 5.x Template",
     "author": "Your Name",
-    "version": (0, 4, 0),
+    "version": (0, 5, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -72,6 +72,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
     def execute(self, context):
         created_names = []
+        created_objects = {}
 
         active_collection = context.collection
 
@@ -84,12 +85,18 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             else:
                 target_collection = get_or_create_collection(collection_name)
 
-            create_line_curve_object(
+            curve_object = create_line_curve_object(
                 name=object_name,
                 location=(float(index) * 1.5, 0.0, 0.0),
                 target_collection=target_collection,
             )
+            created_objects[base_name] = curve_object
             created_names.append(object_name)
+
+        hair_object = created_objects.get("hair")
+        taper_object = created_objects.get("taper")
+        if hair_object is not None and taper_object is not None:
+            hair_object.data.taper_object = taper_object
 
         self.report({"INFO"}, f"Created curves: {', '.join(created_names)}")
         return {"FINISHED"}
