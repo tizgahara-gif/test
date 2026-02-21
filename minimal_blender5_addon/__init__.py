@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 12, 0),
+    "version": (0, 13, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -44,92 +44,11 @@ def get_or_create_collection(collection_name: str) -> bpy.types.Collection:
     return collection
 
 
-def create_bezier_curve_object(
-    name: str,
-    location: tuple[float, float, float],
-    target_collection: bpy.types.Collection,
-) -> bpy.types.Object:
-    """Create a minimal 3D Bézier curve object with two control points."""
-    curve_data = bpy.data.curves.new(name=name, type="CURVE")
-    curve_data.dimensions = "3D"
-
-    spline = curve_data.splines.new(type="BEZIER")
-    spline.bezier_points.add(1)
-
-    point0 = spline.bezier_points[0]
-    point1 = spline.bezier_points[1]
-
-    point0.co = (0.0, 0.0, 0.0)
-    point0.handle_left_type = "AUTO"
-    point0.handle_right_type = "AUTO"
-
-    point1.co = (0.0, 0.0, 1.0)
-    point1.handle_left_type = "AUTO"
-    point1.handle_right_type = "AUTO"
-
-    curve_object = bpy.data.objects.new(name=name, object_data=curve_data)
-    curve_object.location = location
-    target_collection.objects.link(curve_object)
-    return curve_object
-
-
-
-
-def create_taper_bezier_object(
-    name: str,
-    location: tuple[float, float, float],
-    target_collection: bpy.types.Collection,
-) -> bpy.types.Object:
-    """Create taper as an explicit Bézier curve object."""
-    return create_bezier_curve_object(name=name, location=location, target_collection=target_collection)
-
-
-def create_bezier_circle_object(
-    name: str,
-    location: tuple[float, float, float],
-    target_collection: bpy.types.Collection,
-) -> bpy.types.Object:
-    """Create a Bézier Circle object for bevel usage."""
-    curve_data = bpy.data.curves.new(name=name, type="CURVE")
-    curve_data.dimensions = "3D"
-
-    spline = curve_data.splines.new(type="BEZIER")
-    spline.bezier_points.add(3)
-
-    radius = 0.5
-    handle = radius * 0.5522847498
-    coords = (
-        (radius, 0.0, 0.0),
-        (0.0, radius, 0.0),
-        (-radius, 0.0, 0.0),
-        (0.0, -radius, 0.0),
-    )
-    handles_right = (
-        (radius, handle, 0.0),
-        (-handle, radius, 0.0),
-        (-radius, -handle, 0.0),
-        (handle, -radius, 0.0),
-    )
-    handles_left = (
-        (radius, -handle, 0.0),
-        (handle, radius, 0.0),
-        (-radius, handle, 0.0),
-        (-handle, -radius, 0.0),
-    )
-
-    for i, point in enumerate(spline.bezier_points):
-        point.co = coords[i]
-        point.handle_left_type = "FREE"
-        point.handle_right_type = "FREE"
-        point.handle_left = handles_left[i]
-        point.handle_right = handles_right[i]
-
-    spline.use_cyclic_u = True
-
-    curve_object = bpy.data.objects.new(name=name, object_data=curve_data)
-    curve_object.location = location
-    target_collection.objects.link(curve_object)
-    return curve_object
+def move_object_to_collection(obj: bpy.types.Object, target_collection: bpy.types.Collection) -> None:
+    """Move object to the target collection only."""
+    for linked_collection in list(obj.users_collection):
+        linked_collection.objects.unlink(obj)
+    target_collection.objects.link(obj)
 
 
 class DEMO_OT_create_curves(bpy.types.Operator):
@@ -147,31 +66,24 @@ class DEMO_OT_create_curves(bpy.types.Operator):
         for index, base_name in enumerate(BASE_OBJECT_NAMES):
             object_name = unique_object_name(base_name)
             collection_name = COLLECTION_BY_BASE_NAME.get(base_name)
+            location = (float(index) * 1.5, 0.0, 0.0)
+
+            if base_name == "bavel":
+                bpy.ops.curve.primitive_bezier_circle_add(location=location)
+            else:
+                bpy.ops.curve.primitive_bezier_curve_add(location=location)
+
+            created_object = context.view_layer.objects.active
+            created_object.name = object_name
+            if created_object.data is not None:
+                created_object.data.name = object_name
 
             if collection_name is None:
                 target_collection = active_collection
             else:
                 target_collection = get_or_create_collection(collection_name)
 
-            location = (float(index) * 1.5, 0.0, 0.0)
-            if base_name == "bavel":
-                created_object = create_bezier_circle_object(
-                    name=object_name,
-                    location=location,
-                    target_collection=target_collection,
-                )
-            elif base_name == "taper":
-                created_object = create_taper_bezier_object(
-                    name=object_name,
-                    location=location,
-                    target_collection=target_collection,
-                )
-            else:
-                created_object = create_bezier_curve_object(
-                    name=object_name,
-                    location=location,
-                    target_collection=target_collection,
-                )
+            move_object_to_collection(created_object, target_collection)
 
             created_objects[base_name] = created_object
             created_names.append(object_name)

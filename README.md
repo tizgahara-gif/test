@@ -24,7 +24,7 @@ minimal_blender5_addon/
 
 ## ボタン動作
 
-- 1回押すごとにオブジェクトを3つ作成:
+- 1回押すごとにオブジェクトを3つ作成（専用関数ではなく Blender の追加オペレーター（Add）で生成）:
   - `hair`（Bézier Curve、アクティブコレクション直下）
   - `taper`（Bézier Curve、`taper` コレクション直下）
   - `bavel`（**Bézier Circle**、`bevel` コレクション直下）
@@ -39,5 +39,4 @@ minimal_blender5_addon/
 - タブ名は `TAB_NAME` を変更
 - 作成対象名は `BASE_OBJECT_NAMES` を変更
 - コレクション振り分けは `COLLECTION_BY_BASE_NAME` を変更
-- Curve 形状は `create_bezier_curve_object()` / `create_taper_bezier_object()` / `create_bezier_circle_object()` を変更
-- `taper` は専用関数 `create_taper_bezier_object()` で Bézier Curve を生成
+- 生成オペレーターは `bpy.ops.curve.primitive_bezier_curve_add` / `bpy.ops.curve.primitive_bezier_circle_add` を変更
