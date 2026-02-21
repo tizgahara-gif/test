@@ -29,6 +29,7 @@ minimal_blender5_addon/
   - `taper`（Bézier Curve、`taper` コレクション直下）
   - `bavel`（**Bézier Circle**、`bevel` コレクション直下）
 - `taper` / `bevel` コレクションが無い場合は新規作成、既にある場合は再利用して直下へ配置
+- `taper` / `bevel` コレクションを新規作成する場合、コレクションアイコン色を緑（`COLOR_04`）に設定
 - 追加した `hair` の Curve Geometry に、追加した `taper` を Taper Object として設定
 - 追加した `hair` の Curve Bevel Mode を `Object` にし、追加した `bavel`（Bézier Circle）を Bevel Object として設定
 - `hair1` など連番付き Hair 生成時、同じ連番の `taper1` / `bevel1`（または `bavel1`）が既にあれば新規生成せず既存オブジェクトを再利用

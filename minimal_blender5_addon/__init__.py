@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 16, 0),
+    "version": (0, 17, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -33,13 +33,18 @@ def unique_object_name(base_name: str) -> str:
         index += 1
 
 
-def get_or_create_collection(collection_name: str) -> bpy.types.Collection:
+def get_or_create_collection(
+    collection_name: str,
+    color_tag: str | None = None,
+) -> bpy.types.Collection:
     """Get existing collection or create a new one under the scene root collection."""
     collection = bpy.data.collections.get(collection_name)
     if collection is not None:
         return collection
 
     collection = bpy.data.collections.new(collection_name)
+    if color_tag is not None:
+        collection.color_tag = color_tag
     bpy.context.scene.collection.children.link(collection)
     return collection
 
@@ -132,7 +137,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             taper_object.name = taper_name
             if taper_object.data is not None:
                 taper_object.data.name = taper_name
-            move_object_to_collection(taper_object, get_or_create_collection("taper"))
+            move_object_to_collection(taper_object, get_or_create_collection("taper", color_tag="COLOR_04"))
             created_names.append(taper_name)
 
         created_objects["taper"] = taper_object
@@ -145,7 +150,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             bavel_object.name = bavel_name
             if bavel_object.data is not None:
                 bavel_object.data.name = bavel_name
-            move_object_to_collection(bavel_object, get_or_create_collection("bevel"))
+            move_object_to_collection(bavel_object, get_or_create_collection("bevel", color_tag="COLOR_04"))
             created_names.append(bavel_name)
 
         created_objects["bavel"] = bavel_object
