@@ -30,6 +30,7 @@ minimal_blender5_addon/
   - `bavel`（`bevel` コレクション直下）
 - `taper` / `bevel` コレクションが無い場合は新規作成、既にある場合は再利用して直下へ配置
 - 追加した `hair` の Curve Geometry に、追加した `taper` を Taper Object として設定
+- 追加した `hair` の Curve Bevel Mode を `Object` にし、追加した `bavel` を Bevel Object として設定
 - 既に同名オブジェクトが存在する場合は、末尾に連番を付けて作成:
   - 例: `hair`, `hair1`, `hair2` ...
 

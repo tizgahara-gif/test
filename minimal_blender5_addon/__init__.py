@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Minimal Blender 5.x Template",
     "author": "Your Name",
-    "version": (0, 5, 0),
+    "version": (0, 6, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -95,8 +95,14 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
         hair_object = created_objects.get("hair")
         taper_object = created_objects.get("taper")
+        bavel_object = created_objects.get("bavel")
+
         if hair_object is not None and taper_object is not None:
             hair_object.data.taper_object = taper_object
+
+        if hair_object is not None and bavel_object is not None:
+            hair_object.data.bevel_mode = "OBJECT"
+            hair_object.data.bevel_object = bavel_object
 
         self.report({"INFO"}, f"Created curves: {', '.join(created_names)}")
         return {"FINISHED"}
