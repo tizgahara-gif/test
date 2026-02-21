@@ -3,17 +3,19 @@
 bl_info = {
     "name": "Minimal Blender 5.x Template",
     "author": "Your Name",
-    "version": (0, 6, 0),
+    "version": (0, 7, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
     "category": "3D View",
 }
 
+import math
+
 import bpy
 
 TAB_NAME = "Blender5Tab"
-BASE_CURVE_NAMES = ("hair", "taper", "bavel")
+BASE_OBJECT_NAMES = ("hair", "taper", "bavel")
 COLLECTION_BY_BASE_NAME = {
     "taper": "taper",
     "bavel": "bevel",
@@ -64,8 +66,57 @@ def create_line_curve_object(
     return curve_object
 
 
+def create_bezier_circle_object(
+    name: str,
+    location: tuple[float, float, float],
+    target_collection: bpy.types.Collection,
+) -> bpy.types.Object:
+    """Create a Bezier circle curve object and rotate it 90 degrees on Y."""
+    curve_data = bpy.data.curves.new(name=name, type="CURVE")
+    curve_data.dimensions = "3D"
+
+    spline = curve_data.splines.new(type="BEZIER")
+    spline.bezier_points.add(3)
+
+    radius = 0.5
+    handle = radius * 0.5522847498
+    coords = (
+        (radius, 0.0, 0.0),
+        (0.0, radius, 0.0),
+        (-radius, 0.0, 0.0),
+        (0.0, -radius, 0.0),
+    )
+    handles_right = (
+        (radius, handle, 0.0),
+        (-handle, radius, 0.0),
+        (-radius, -handle, 0.0),
+        (handle, -radius, 0.0),
+    )
+    handles_left = (
+        (radius, -handle, 0.0),
+        (handle, radius, 0.0),
+        (-radius, handle, 0.0),
+        (-handle, -radius, 0.0),
+    )
+
+    for i, point in enumerate(spline.bezier_points):
+        point.co = coords[i]
+        point.handle_left_type = "FREE"
+        point.handle_right_type = "FREE"
+        point.handle_left = handles_left[i]
+        point.handle_right = handles_right[i]
+
+    spline.use_cyclic_u = True
+
+    curve_object = bpy.data.objects.new(name=name, object_data=curve_data)
+    curve_object.location = location
+    curve_object.rotation_euler[1] = math.radians(90.0)
+    target_collection.objects.link(curve_object)
+    return curve_object
+
+
 class DEMO_OT_create_curves(bpy.types.Operator):
-    """Create hair/taper/bavel curve objects with unique suffixes and collection routing."""
+    """Create hair/taper/bavel objects with unique suffixes and collection routing."""
 
     bl_idname = "demo.create_curves"
     bl_label = "Create hair/taper/bavel"
@@ -76,7 +127,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
 
         active_collection = context.collection
 
-        for index, base_name in enumerate(BASE_CURVE_NAMES):
+        for index, base_name in enumerate(BASE_OBJECT_NAMES):
             object_name = unique_object_name(base_name)
             collection_name = COLLECTION_BY_BASE_NAME.get(base_name)
 
@@ -85,12 +136,21 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             else:
                 target_collection = get_or_create_collection(collection_name)
 
-            curve_object = create_line_curve_object(
-                name=object_name,
-                location=(float(index) * 1.5, 0.0, 0.0),
-                target_collection=target_collection,
-            )
-            created_objects[base_name] = curve_object
+            location = (float(index) * 1.5, 0.0, 0.0)
+            if base_name == "bavel":
+                created_object = create_bezier_circle_object(
+                    name=object_name,
+                    location=location,
+                    target_collection=target_collection,
+                )
+            else:
+                created_object = create_line_curve_object(
+                    name=object_name,
+                    location=location,
+                    target_collection=target_collection,
+                )
+
+            created_objects[base_name] = created_object
             created_names.append(object_name)
 
         hair_object = created_objects.get("hair")
@@ -104,7 +164,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
             hair_object.data.bevel_mode = "OBJECT"
             hair_object.data.bevel_object = bavel_object
 
-        self.report({"INFO"}, f"Created curves: {', '.join(created_names)}")
+        self.report({"INFO"}, f"Created objects: {', '.join(created_names)}")
         return {"FINISHED"}
 
 
