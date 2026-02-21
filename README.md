@@ -25,8 +25,8 @@ minimal_blender5_addon/
 ## ボタン動作
 
 - 1回押すごとにオブジェクトを3つ作成:
-  - `hair`（Curve、アクティブコレクション直下）
-  - `taper`（Curve、`taper` コレクション直下）
+  - `hair`（Bézier Curve、アクティブコレクション直下）
+  - `taper`（Bézier Curve、`taper` コレクション直下）
   - `bavel`（**Bézier Circle**、`bevel` コレクション直下、Y軸 90 度回転）
 - `taper` / `bevel` コレクションが無い場合は新規作成、既にある場合は再利用して直下へ配置
 - 追加した `hair` の Curve Geometry に、追加した `taper` を Taper Object として設定
@@ -39,4 +39,4 @@ minimal_blender5_addon/
 - タブ名は `TAB_NAME` を変更
 - 作成対象名は `BASE_OBJECT_NAMES` を変更
 - コレクション振り分けは `COLLECTION_BY_BASE_NAME` を変更
-- Curve 形状は `create_line_curve_object()` / `create_bezier_circle_object()` を変更
+- Curve 形状は `create_bezier_curve_object()` / `create_bezier_circle_object()` を変更

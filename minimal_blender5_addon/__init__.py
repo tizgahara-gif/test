@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Minimal Blender 5.x Template",
     "author": "Your Name",
-    "version": (0, 7, 0),
+    "version": (0, 8, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -46,19 +46,28 @@ def get_or_create_collection(collection_name: str) -> bpy.types.Collection:
     return collection
 
 
-def create_line_curve_object(
+def create_bezier_curve_object(
     name: str,
     location: tuple[float, float, float],
     target_collection: bpy.types.Collection,
 ) -> bpy.types.Object:
-    """Create a minimal 3D curve object with two points in a target collection."""
+    """Create a minimal 3D Bézier curve object with two control points."""
     curve_data = bpy.data.curves.new(name=name, type="CURVE")
     curve_data.dimensions = "3D"
 
-    spline = curve_data.splines.new(type="POLY")
-    spline.points.add(1)
-    spline.points[0].co = (0.0, 0.0, 0.0, 1.0)
-    spline.points[1].co = (0.0, 0.0, 1.0, 1.0)
+    spline = curve_data.splines.new(type="BEZIER")
+    spline.bezier_points.add(1)
+
+    point0 = spline.bezier_points[0]
+    point1 = spline.bezier_points[1]
+
+    point0.co = (0.0, 0.0, 0.0)
+    point0.handle_left_type = "AUTO"
+    point0.handle_right_type = "AUTO"
+
+    point1.co = (0.0, 0.0, 1.0)
+    point1.handle_left_type = "AUTO"
+    point1.handle_right_type = "AUTO"
 
     curve_object = bpy.data.objects.new(name=name, object_data=curve_data)
     curve_object.location = location
@@ -144,7 +153,7 @@ class DEMO_OT_create_curves(bpy.types.Operator):
                     target_collection=target_collection,
                 )
             else:
-                created_object = create_line_curve_object(
+                created_object = create_bezier_curve_object(
                     name=object_name,
                     location=location,
                     target_collection=target_collection,
