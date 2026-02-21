@@ -3,14 +3,12 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 9, 0),
+    "version": (0, 10, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > Blender5Tab",
     "description": "A minimal starter add-on template for Blender 5.x",
     "category": "3D View",
 }
-
-import math
 
 import bpy
 
@@ -80,7 +78,7 @@ def create_bezier_circle_object(
     location: tuple[float, float, float],
     target_collection: bpy.types.Collection,
 ) -> bpy.types.Object:
-    """Create a Bezier circle curve object and rotate it 90 degrees on Y."""
+    """Create a Bézier Circle object for bevel usage."""
     curve_data = bpy.data.curves.new(name=name, type="CURVE")
     curve_data.dimensions = "3D"
 
@@ -119,7 +117,6 @@ def create_bezier_circle_object(
 
     curve_object = bpy.data.objects.new(name=name, object_data=curve_data)
     curve_object.location = location
-    curve_object.rotation_euler[1] = math.radians(90.0)
     target_collection.objects.link(curve_object)
     return curve_object
 

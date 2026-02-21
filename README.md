@@ -27,7 +27,7 @@ minimal_blender5_addon/
 - 1回押すごとにオブジェクトを3つ作成:
   - `hair`（Bézier Curve、アクティブコレクション直下）
   - `taper`（Bézier Curve、`taper` コレクション直下）
-  - `bavel`（**Bézier Circle**、`bevel` コレクション直下、Y軸 90 度回転）
+  - `bavel`（**Bézier Circle**、`bevel` コレクション直下）
 - `taper` / `bevel` コレクションが無い場合は新規作成、既にある場合は再利用して直下へ配置
 - 追加した `hair` の Curve Geometry に、追加した `taper` を Taper Object として設定
 - 追加した `hair` の Curve Bevel Mode を `Object` にし、追加した `bavel`（Bézier Circle）を Bevel Object として設定
