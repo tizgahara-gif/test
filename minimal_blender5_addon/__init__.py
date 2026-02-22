@@ -3,7 +3,7 @@
 bl_info = {
     "name": "Simple_hair5",
     "author": "Your Name",
-    "version": (0, 17, 0),
+    "version": (0, 18, 0),
     "blender": (5, 0, 0),
     "location": "3D View > N Panel > SH5",
     "description": "A minimal starter add-on template for Blender 5.x",
@@ -170,6 +170,31 @@ class DEMO_OT_create_curves(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class DEMO_OT_origin_to_geometry(bpy.types.Operator):
+    """Move origin to geometry for currently selected objects."""
+
+    bl_idname = "demo.origin_to_geometry"
+    bl_label = "OtG"
+
+    def execute(self, context):
+        selected_objects = list(context.selected_objects)
+        if not selected_objects:
+            self.report({"WARNING"}, "No selected objects")
+            return {"CANCELLED"}
+
+        previous_active = context.view_layer.objects.active
+
+        for obj in selected_objects:
+            context.view_layer.objects.active = obj
+            obj.select_set(True)
+            bpy.ops.object.origin_set(type="ORIGIN_GEOMETRY", center="MEDIAN")
+
+        context.view_layer.objects.active = previous_active
+
+        self.report({"INFO"}, "Moved origin to geometry for selected objects")
+        return {"FINISHED"}
+
+
 class DEMO_PT_panel(bpy.types.Panel):
     """Simple panel shown in the 3D View N-panel."""
 
@@ -183,9 +208,10 @@ class DEMO_PT_panel(bpy.types.Panel):
         layout = self.layout
         layout.label(text="3D View > Nパネル > SH5")
         layout.operator(DEMO_OT_create_curves.bl_idname, icon="CURVE_DATA")
+        layout.operator(DEMO_OT_origin_to_geometry.bl_idname, icon="OBJECT_ORIGIN")
 
 
-classes = (DEMO_OT_create_curves, DEMO_PT_panel)
+classes = (DEMO_OT_create_curves, DEMO_OT_origin_to_geometry, DEMO_PT_panel)
 
 
 def register():
